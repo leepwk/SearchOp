@@ -3,6 +3,7 @@ using SearchEngine.Repository;
 using SearchEngine.Repository.Helpers;
 using SearchEngine.Repository.Interface;
 using SearchEngine.Service;
+using SearchEngine.Service.Helpers;
 using SearchEngine.Service.Interface;
 
 // Please see the README.md for to explain this playwright browser installation
@@ -46,6 +47,8 @@ builder.Services.AddCors(options =>
 // Register IHttpClientFactory to use HttpClient
 builder.Services.AddHttpClient();
 
+builder.Services.AddSingleton<IScraperBaseFactory, ScraperBaseFactory>();
+builder.Services.AddSingleton<IScraperFactory, ScraperFactory>();
 builder.Services.AddTransient<IDataConnection, DataConnection>();
 builder.Services.AddTransient<IWebScraper, WebScraper>();
 builder.Services.AddTransient<ISearchRepository, SearchRepository>();

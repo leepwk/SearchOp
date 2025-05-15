@@ -12,30 +12,18 @@ namespace SearchEngine.Service
     {
         private readonly HttpClient _httpClient;
         private readonly AppSettings _appSettings;
+        private readonly IScraperFactory _scraperFactory;
 
-        public WebScraper(ILogger<WebScraper> logger, HttpClient httpClient, IOptions<AppSettings> appSettings) : base(logger)
+        public WebScraper(ILogger<WebScraper> logger, HttpClient httpClient, IOptions<AppSettings> appSettings, IScraperFactory scraperFactory) : base(logger)
         {
             _httpClient = httpClient;
             _appSettings = appSettings.Value;
+            _scraperFactory = scraperFactory;
         }
 
         public async Task<IEnumerable<SearchEngineResultBase>> FetchByUrlTerms(string url, string searchTerm, bool usePlaywright)
         {
-            IScraper scraper = null;
-
-            if (url.Contains(SearchHelper.GoogleStr))
-            {
-                scraper = new GoogleHelper(_httpClient);
-            }
-            else if (url.Contains(SearchHelper.BingStr))
-            {
-                scraper = new BingHelper(_httpClient);
-            }
-            else
-            {
-                // default
-                scraper = new GenericHelper(_httpClient);
-            }
+            var scraper = _scraperFactory.Create(url);
 
             // Check the terms and conditions of the search engine but override by config setting
             if (!_appSettings.OverrideTerms && !scraper.IsAllowed())

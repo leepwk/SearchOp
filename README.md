@@ -13,6 +13,8 @@ The database is designed to persist data; however, in the event of database unav
 
 Results for a single day are stored in the database, they are overwritten with the most recent results for that day if run multiple times
 
+The best results are using the Bing search with Playwright
+
 ## Main Features
 
 - Headless browser search scraping
@@ -26,7 +28,7 @@ Results for a single day are stored in the database, they are overwritten with t
 - Server side validation of data input using FluentValidation
 - Speech to text implementation on the UI
 - Load search engine terms and conditions to check whether scraping is allowed or not
-- Additional SearchAPI scraper implementation
+- Additional SearchAPI scraper implementation for Google
 - Entity Framework for robust datastore processing
 
 ## Tech Stack
