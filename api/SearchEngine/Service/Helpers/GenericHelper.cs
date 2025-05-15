@@ -5,6 +5,9 @@ using System.Web;
 
 namespace SearchEngine.Service.Helpers
 {
+    /// <summary>
+    /// Generic web scraper for other types of search engines, may or may not be successful
+    /// </summary>
     public class GenericHelper : IScraper
     {
         private readonly HttpClient _httpClient;
@@ -20,6 +23,7 @@ namespace SearchEngine.Service.Helpers
 
         public async Task<IEnumerable<SearchEngineResultBase>> Scrape(string url, string searchTerm, string urlSearchId, bool usePlaywright = false)
         {
+            // best guess as to the search querystring
             var searchUrl = $"{url}/search?q={HttpUtility.UrlEncode(searchTerm)}";
 
             var html = await _httpClient.GetStringAsync(searchUrl);
@@ -28,6 +32,7 @@ namespace SearchEngine.Service.Helpers
 
             var resultLinks = new List<SearchEngineResultBase>();
 
+            // generically search for links
             var nodes = doc.DocumentNode.SelectNodes("//a[starts-with(@href, 'https:')]");
 
             if (nodes != null)

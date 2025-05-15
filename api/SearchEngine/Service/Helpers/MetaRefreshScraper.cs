@@ -7,6 +7,9 @@ using System.Web;
 
 namespace SearchEngine.Service.Helpers
 {
+    /// <summary>
+    /// Specific attempt to fool the Google search page but was not very successful
+    /// </summary>
     public class MetaRefreshScraper : IScraperBase
     {
         private readonly HttpClient _httpClient;
@@ -43,6 +46,11 @@ namespace SearchEngine.Service.Helpers
             return resultLinks.Distinct();
         }
 
+        /// <summary>
+        /// There is a redirect on the google landing page before finally a disclaimer that javascript is needed in order to continue
+        /// </summary>
+        /// <param name="searchUrl"></param>
+        /// <returns></returns>
         private async Task<string> AllowMetaRefresh(string searchUrl)
         {
             var html = await _httpClient.GetStringAsync(searchUrl);

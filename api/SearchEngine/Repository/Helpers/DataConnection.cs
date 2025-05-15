@@ -5,6 +5,9 @@ using SearchEngine.Repository.Interface;
 
 namespace SearchEngine.Repository.Helpers
 {
+    /// <summary>
+    /// Factory class for the SQL database connection
+    /// </summary>
     public class DataConnection : IDataConnection
     {
         private readonly AppSettings _appSettings;

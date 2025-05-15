@@ -5,24 +5,31 @@ using System.Web;
 
 namespace SearchEngine.Service.Helpers
 {
+    /// <summary>
+    /// Specific class for scraping a Bing web search
+    /// </summary>
     public class BingHelper : IScraper
     {
         private readonly HttpClient _httpClient;
         private const int pageLength = 10;
+
         public BingHelper(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            // simulate a browser request
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
         }
 
         public bool IsAllowed()
         {
+            // TODO: check the web site terms and condition
             return true;
         }
 
         public async Task<IEnumerable<SearchEngineResultBase>> Scrape(string url, string searchTerm, string urlSearchId, bool usePlaywright = false)
         {
+            // launch playwright browser headless
             using var playwright = await Playwright.CreateAsync();
             await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
@@ -39,13 +46,14 @@ namespace SearchEngine.Service.Helpers
 
             var resultLinks = new List<SearchEngineResultBase>();
 
+            // loop round to handle pagination
             while (hasMoreResults)
             {
                 int first = pageNumber * pageLength + 1; // Bing uses For the first page, first = 1, for second page, first = pageLength + 1, etc.
-                var searchUrl = $"{searchUrlTemplate}{first}&t={Guid.NewGuid()}";
+                var searchUrl = $"{searchUrlTemplate}{first}&t={Guid.NewGuid()}"; // in case of caching, append randomised query
 
                 await page.GotoAsync(searchUrl);
-
+                // most reliable selector to find the links
                 await page.WaitForSelectorAsync("cite:has-text('https:')");
 
                 // Extract result links

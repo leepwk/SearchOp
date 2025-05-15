@@ -6,6 +6,9 @@ using System.Data;
 
 namespace SearchEngine.Repository
 {
+    /// <summary>
+    /// Database repository access methods using common Sql classes from Microsoft
+    /// </summary>
     public class SearchRepository : BaseLogger<SearchRepository>, ISearchRepository
     {
         private readonly IDataConnection _dataConnection;
@@ -25,11 +28,10 @@ namespace SearchEngine.Repository
             await using SqlCommand command = new SqlCommand(cmd, connection);
             try
             {
-                // Open the connection
                 connection.Open();
 
-                // Execute the query
                 await using SqlDataReader reader = command.ExecuteReader();
+
                 // Loop through the rows
                 while (reader.Read())
                 {
@@ -52,19 +54,19 @@ namespace SearchEngine.Repository
 
         public async void InsertSearchEngineType(int engineId, string engineDesc)
         {
+            // command to run
             var cmd = "INSERT INTO SearchEngine (EngineId, EngineDescription) VALUES (@EngineId, @EngineDescription)";
 
             await using SqlConnection connection = _dataConnection.GetConnection();
             await using SqlCommand command = new SqlCommand(cmd, connection);
             try
             {
-                // Open the connection
                 connection.Open();
 
+                // parameterise the inputs safely
                 command.Parameters.AddWithValue("@EngineId", engineId);
                 command.Parameters.AddWithValue("@EngineDescription", engineDesc);
 
-                // Execute the query
                 int rowsAffected = command.ExecuteNonQuery();
                 Logger.LogInformation($"Inserted {rowsAffected} row");
             }
@@ -83,13 +85,13 @@ namespace SearchEngine.Repository
             await using SqlCommand command = new SqlCommand(cmd, connection);
             try
             {
-                // Open the connection
                 connection.Open();
 
+                // parameterise the inputs safely
                 command.Parameters.AddWithValue("@EngineId", engineId);
 
-                // Execute the query
                 await using SqlDataReader reader = command.ExecuteReader();
+
                 // Loop through the rows
                 while (reader.Read())
                 {
@@ -112,6 +114,13 @@ namespace SearchEngine.Repository
             return results;
         }
 
+        /// <summary>
+        /// Insert new result records for the current day, will overwrite the existing day
+        /// </summary>
+        /// <param name="engineId"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="toInsert"></param>
+        /// <returns></returns>
         public async Task<bool> InsertSearchEngineResults(int engineId, string searchTerm, List<SearchEngineResultBase> toInsert)
         {
             var result = false;
@@ -124,17 +133,18 @@ namespace SearchEngine.Repository
 
             try
             {
-                // Open the connection
                 connection.Open();
                 transaction = connection.BeginTransaction();
 
+                // delete first, then insert for the current day
                 await using SqlCommand deleteCommand = new SqlCommand(deleteCmd, connection, transaction);
+                // parameterise the inputs safely
                 deleteCommand.Parameters.AddWithValue("@EngineId", engineId);
                 deleteCommand.Parameters.AddWithValue("@EntryDate", recordDate);
                 deleteCommand.ExecuteNonQuery();
 
                 await using SqlCommand command = new SqlCommand(insertCmd, connection, transaction);
-
+                // parameterise the inputs safely
                 command.Parameters.AddWithValue("@EngineId", engineId);
                 command.Parameters.AddWithValue("@EntryDate", recordDate);
                 command.Parameters.AddWithValue("@SearchTerm", searchTerm);

@@ -5,6 +5,9 @@ using SearchEngine.Service.Interface;
 
 namespace SearchEngine.Service
 {
+    /// <summary>
+    /// Service class to process search requests and direct the processing
+    /// </summary>
     public class SearchService : BaseLogger<SearchService>, ISearchService
     {
         private readonly IWebScraper _webScraper;
@@ -16,6 +19,13 @@ namespace SearchEngine.Service
             _searchRepository = searchRepository;
         }
 
+        /// <summary>
+        /// Method to fetch results from the search engine
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="usePlaywright"></param>
+        /// <returns></returns>
         public async Task<SearchEngineResultResponse> FetchByUrlTerms(string url, string searchTerm, bool usePlaywright) 
         {
             var results = new List<SearchEngineResult>();
@@ -24,6 +34,7 @@ namespace SearchEngine.Service
             try
             {
                 var engineId = 0;
+                // find the engine type from existing list
                 var engineResults = await GetSearchEngineType();
                 var existingEngine = engineResults.Data.FirstOrDefault(s => url.Contains(s.EngineDescription));
                 if (existingEngine != null)
@@ -38,12 +49,12 @@ namespace SearchEngine.Service
                     _searchRepository.InsertSearchEngineType(engineId, url);
                 }
 
-                // fetch new results
+                // fetch new results from scraping
                 var scrapeResults = await _webScraper.FetchByUrlTerms(url, searchTerm, usePlaywright);
                 var scrapeResultsList = scrapeResults.ToList();
                 if (!scrapeResultsList.Any())
                 {
-                    // if nothing
+                    // if nothing - zero is a valid result
                     scrapeResultsList.Add(new SearchEngineResultBase { Rank = 0, SearchTerm = searchTerm, Url = ""});
                 }
 
@@ -74,10 +85,13 @@ namespace SearchEngine.Service
             return new SearchEngineResultResponse { Data = results, Message = msg };
         }
 
+        /// <summary>
+        /// Method to return list of previously used search engine websites
+        /// </summary>
+        /// <returns></returns>
         public async Task<SearchEngineTypeResponse> GetSearchEngineType()
         {
             return await  _searchRepository.GetSearchEngineType();
         }
-
     }
 }

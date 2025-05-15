@@ -3,13 +3,16 @@ using SearchEngine.Service.Interface;
 
 namespace SearchEngine.Service.Helpers
 {
+    /// <summary>
+    /// Specific class for scraping a Google web search
+    /// Two methods where attempted, before more success was achieved with using Playwright
+    /// </summary>
     public class GoogleHelper : IScraper
     {
         private readonly HttpClient _httpClient;
         public GoogleHelper(HttpClient httpClient)
         {
             _httpClient = httpClient;
-
             // required to bypass disclaimer
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
@@ -18,11 +21,13 @@ namespace SearchEngine.Service.Helpers
 
         public bool IsAllowed()
         {
+            // TODO: check the web site terms and condition
             return true;
         }
 
         public async Task<IEnumerable<SearchEngineResultBase>> Scrape(string url, string searchTerm, string urlSearchId, bool usePlaywright = false)
         {
+            // using Playwright browser will require manually intervention to get through the CAPTCHA pages
             IScraperBase scraper = null;
             if (usePlaywright)
             {

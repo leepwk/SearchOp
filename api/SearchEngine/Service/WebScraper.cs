@@ -5,6 +5,9 @@ using SearchEngine.Service.Interface;
 
 namespace SearchEngine.Service
 {
+    /// <summary>
+    /// Decision making class to determine which web scraping helper class to instantiate
+    /// </summary>
     public class WebScraper : BaseLogger<WebScraper>, IWebScraper
     {
         private readonly HttpClient _httpClient;
@@ -30,9 +33,11 @@ namespace SearchEngine.Service
             }
             else
             {
+                // default
                 scraper = new GenericHelper(_httpClient);
             }
 
+            // Check the terms and conditions of the search engine but override by config setting
             if (!_appSettings.OverrideTerms && !scraper.IsAllowed())
             {
                 var errMsg = $"{url} is not allowed to be scraped";
@@ -42,7 +47,5 @@ namespace SearchEngine.Service
 
             return await scraper.Scrape(url, searchTerm, _appSettings.UrlSearchId, usePlaywright);
         }
-
-        
     }
 }

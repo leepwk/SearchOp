@@ -11,6 +11,8 @@ The recommended approach is to utilise official Google APIs or SearchAPI provide
 
 The database is designed to persist data; however, in the event of database unavailability, the system has resilience built in. While there may be slower response times due to failure in communicating with the database, the application will continue to function.
 
+Results for a single day are stored in the database, they are overwritten with the most recent results for that day if run multiple times
+
 ## Main Features
 
 - Headless browser search scraping
@@ -44,12 +46,19 @@ cd SearchOp/api - for the Web API
 After restore of all packages (access to nuget.org is a must) and successful Build - on the first run of the solution (IIS Express tested), the Playwright minimal browser will be installed so there will be an initial delay for this and run automatically in Program.cs
 
 > Console.WriteLine("Installing Playwright browsers...");
+
 > var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
+
 > if (exitCode != 0)
+
 > {
+
 >    Console.WriteLine("Browser installation failed.");
+
 >    Environment.Exit(exitCode);
+
 > }
+
 > Console.WriteLine("Browser installation completed.");
 
 The ConnectionString configuration is found in appsettings.Development.json - replace with the details of a local database

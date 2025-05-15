@@ -15,7 +15,6 @@ if (exitCode != 0)
 }
 Console.WriteLine("Browser installation completed.");
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Bind the configuration section to the MySettings class
+// Bind the configuration section to the AppSettings class
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Read allowed origins from configuration
@@ -51,7 +50,6 @@ builder.Services.AddTransient<IDataConnection, DataConnection>();
 builder.Services.AddTransient<IWebScraper, WebScraper>();
 builder.Services.AddTransient<ISearchRepository, SearchRepository>();
 builder.Services.AddTransient<ISearchService, SearchService>();
-
 
 var app = builder.Build();
 

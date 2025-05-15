@@ -5,6 +5,9 @@ using SearchEngine.Service.Interface;
 
 namespace SearchEngine.Host.Controllers
 {
+    /// <summary>
+    /// Main Search entry point
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class SearchController : BaseController<SearchController>
@@ -15,12 +18,23 @@ namespace SearchEngine.Host.Controllers
             _searchService = searchService;
         }
 
+        /// <summary>
+        /// Retrieve search engine scraping results if any
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="usePlaywright"></param>
+        /// <returns></returns>
         [HttpGet("Rankings", Name = "Rankings")]
         public async Task<SearchEngineResultResponse> Get([FromQuery]string url = "https://www.bing.com",[FromQuery]string searchTerm = "land registry search", [FromQuery]bool usePlaywright = false)
         {
             return await _searchService.FetchByUrlTerms(url, searchTerm, usePlaywright);
         }
 
+        /// <summary>
+        /// Retrieve list of search url previously used
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("EngineType", Name = "EngineType")]
         public async Task<SearchEngineTypeResponse> GetEngineType()
         {
