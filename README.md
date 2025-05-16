@@ -55,21 +55,16 @@ After restore of all packages (access to nuget.org is a must) and successful Bui
 
 Running by default as localhost:44343
 
-```Console.WriteLine("Installing Playwright browsers...");```
-
-```var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });```
-
-```if (exitCode != 0)```
-
-```{```
-
-```    Console.WriteLine("Browser installation failed.");```
-
-```    Environment.Exit(exitCode);```
-
-```}```
-
-```Console.WriteLine("Browser installation completed.");```
+<pre>
+```Console.WriteLine("Installing Playwright browsers...");
+var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
+if (exitCode != 0)
+{
+	Console.WriteLine("Browser installation failed.");
+	Environment.Exit(exitCode);
+}
+Console.WriteLine("Browser installation completed.");```
+</pre>
 
 The ConnectionString configuration is found in **appsettings.Development.json** - replace with the details of a local database
 
