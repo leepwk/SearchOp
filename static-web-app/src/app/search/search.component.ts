@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from "../services/search.service";
 import { ToastrService } from "ngx-toastr";
@@ -9,6 +9,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { ScatterChartComponent } from '../components/scatter-chart/scatter-chart.component';
 import { SpinnerOverlayComponent } from '../components/spinneroverlay/spinneroverlay.component';
@@ -16,7 +17,7 @@ import { SpinnerOverlayComponent } from '../components/spinneroverlay/spinnerove
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, MatAutocompleteModule, MatInputModule, MatButtonModule, MatCheckboxModule, FormsModule, ScatterChartComponent, SpinnerOverlayComponent],
+  imports: [CommonModule, MatAutocompleteModule, MatInputModule, MatButtonModule, MatCheckboxModule, MatIcon, FormsModule, ScatterChartComponent, SpinnerOverlayComponent],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
   providers: [SearchService, ToastrService, HttpClient]
@@ -27,6 +28,9 @@ export class SearchComponent implements OnInit {
   searchTerm: string = "";
   usePlaywright: boolean = false;
 
+  recognition: any;
+  speechSupported = false;
+
   searchResults: SearchResult[] = [];
   searchEngines: SearchEngine[] = [];
   filteredOptions: SearchEngine[] = [];
@@ -34,8 +38,50 @@ export class SearchComponent implements OnInit {
 
   constructor(
     private searchService: SearchService,
-    private toastrService: ToastrService
-  ) {}
+    private toastrService: ToastrService,
+    private ngZone: NgZone
+  ) {
+
+    const speechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+
+    if (speechRecognition) {
+      this.speechSupported = true;
+      this.recognition = new speechRecognition();
+      this.recognition.continuous = false;
+      this.recognition.interimResults = false;
+      this.recognition.lang = 'en-GB';
+
+      this.recognition.onresult = (event: any) => {
+        let transcript = event.results[0][0].transcript;
+
+        // Remove trailing punctuation like period, question mark, etc.
+        transcript = transcript.trim().replace(/[.?!،؟。！]$/, '');
+
+        this.ngZone.run(() => {
+          this.searchTerm = transcript;
+
+          if (this.searchTerm.trim() && this.url.trim())
+          {
+            setTimeout(() => {
+              this.submitForm();
+            });
+          }
+        });
+
+      };
+
+      this.recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+      };
+
+  }
+}
+
+  startListening() {
+    if (this.speechSupported) {
+      this.recognition.start();
+    }
+  }
 
   ngOnInit() {
     this.getSearchEngines();

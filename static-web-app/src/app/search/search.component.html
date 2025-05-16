@@ -3,10 +3,22 @@
 
 <div class="form-container">
 
+    <button mat-fab color="primary"
+    (click)="startListening()"
+    [disabled]="!speechSupported"
+    class="mic-button"
+    aria-label="Speak">
+    <mat-icon>mic</mat-icon>
+    </button>
+
     <mat-form-field appearance="fill" class="input-field">
-        <mat-label>Enter search terms</mat-label>
+        <mat-label>Enter search terms or speak</mat-label>
         <input matInput [(ngModel)]="searchTerm">
     </mat-form-field>
+
+    <div *ngIf="!speechSupported" style="color: red; margin-top: 1rem;">
+        Speech recognition is not supported in this browser.
+    </div>
 
     <mat-form-field appearance="fill" class="input-field">
         <mat-label>Choose or type the search url</mat-label>
