@@ -33,6 +33,7 @@ The Web API can be run and tested using swagger documentation. A page with testa
 - Load search engine terms and conditions to check whether scraping is allowed or not
 - Additional SearchAPI scraper implementation for Google
 - Entity Framework for robust datastore processing
+- Further Unit Tests
 
 ## Tech Stack
 
@@ -43,26 +44,37 @@ The Web API can be run and tested using swagger documentation. A page with testa
 
 ### 1. Clone the Repository
 
-git clone https://github.com/leepwk/SearchOp.git
+`git clone https://github.com/leepwk/SearchOp.git`
 
 ### 2. Build and Run the solutions
 
 `cd SearchOp/api` - for the Web API
 Visual Studio 2022 is recommended IDE
+
 After restore of all packages (access to nuget.org is a must) and successful Build - on the first run of the solution (IIS Express tested), the Playwright minimal browser will be installed so there will be an initial delay for this and run automatically in Program.cs
+
 Running by default as localhost:44343
 
 ```Console.WriteLine("Installing Playwright browsers...");```
+
 ```var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });```
+
 ```if (exitCode != 0)```
+
 ```{```
+
 ```    Console.WriteLine("Browser installation failed.");```
+
 ```    Environment.Exit(exitCode);```
+
 ```}```
+
 ```Console.WriteLine("Browser installation completed.");```
 
 The ConnectionString configuration is found in **appsettings.Development.json** - replace with the details of a local database
-```"ConnectionString": "Server=wadev-l\\webappsdev;Database=OMSTrade_backup;Trusted_Connection=True;"```
+
+```"ConnectionString": "Server=localhost\\SQLEXPRESS;Database=YourDatabaseName;Trusted_Connection=True"```
+
 There is a folder, **DBSCripts**, in the solution containing the database creation and data load (for some historical test data) sql script to run
 
 ---
@@ -79,5 +91,6 @@ Optional installation of `nvm` to manage versions of node (https://github.com/co
 `ng serve` - to run solution, default port is 4200 ie. running as localhost:4200
 
 In ngx-config.json, the Web API endpoint url is set to the default localhost and port, update as necessary
+
 ```"searchApiWebUrl":  "https://localhost:44343"```
 
