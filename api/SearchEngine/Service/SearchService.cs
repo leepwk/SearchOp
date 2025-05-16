@@ -30,10 +30,10 @@ namespace SearchEngine.Service
         {
             var results = new List<SearchEngineResult>();
             var msg = string.Empty;
-            var engineId = 0;
-
+            var newEngineId = 0;
             try
             {
+                var engineId = 0;
                 // find the engine type from existing list
                 var engineResults = await GetSearchEngineType();
                 var existingEngine = engineResults.Data.FirstOrDefault(s => url.Contains(s.EngineDescription));
@@ -45,7 +45,7 @@ namespace SearchEngine.Service
                 else
                 {
                     // new search url - add to lookup table
-                    engineId = engineResults.Data.Any() ? engineResults.Data.Max(s => s.EngineId) + 1 : 1;
+                    newEngineId = engineId = engineResults.Data.Any() ? engineResults.Data.Max(s => s.EngineId) + 1 : 1;
                     _searchRepository.InsertSearchEngineType(engineId, url);
                 }
 
@@ -78,7 +78,12 @@ namespace SearchEngine.Service
             }
             catch (Exception ex)
             {
-                _searchRepository.DeleteSearchEngineType(engineId);
+                // only remove new search engines which have failed for some reason
+                if (newEngineId > 0)
+                {
+                    _searchRepository.DeleteSearchEngineType(newEngineId);
+                }
+
                 msg = ex.Message;
                 Logger.LogError($"Unhandled error: {nameof(FetchByUrlTerms)}: {msg}");
             }

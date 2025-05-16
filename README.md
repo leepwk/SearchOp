@@ -29,7 +29,7 @@ The Web API can be run and tested using swagger documentation. A page with testa
 
 - Separation of Web API solution into separate projects for Host, Service and Repository layers, each with their own models - currently in one project for convenience
 - Better server side validation of data input using FluentValidation, more useful error messaging
-- Speech to text implementation on the UI
+- Speech to text implementation on the UI (`experimental` branch contains a work in progress of this - if url and search term filled, auto triggers submit)
 - Load search engine terms and conditions to check whether scraping is allowed or not
 - Additional SearchAPI scraper implementation for Google
 - Entity Framework for robust datastore processing
