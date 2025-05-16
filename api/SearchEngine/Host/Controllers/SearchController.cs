@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SearchEngine.Common.Model;
 using SearchEngine.Common.Model.Response;
+using SearchEngine.Service.Helpers;
 using SearchEngine.Service.Interface;
 
 namespace SearchEngine.Host.Controllers
@@ -28,7 +29,11 @@ namespace SearchEngine.Host.Controllers
         [HttpGet("Rankings", Name = "Rankings")]
         public async Task<SearchEngineResultResponse> Get([FromQuery]string url = "https://www.bing.com",[FromQuery]string searchTerm = "land registry search", [FromQuery]bool usePlaywright = false)
         {
-            return await _searchService.FetchByUrlTerms(url, searchTerm, usePlaywright);
+            if (url.EnsureHttps(out string validUrl))
+            {
+                return await _searchService.FetchByUrlTerms(validUrl, searchTerm, usePlaywright);
+            }
+            return new SearchEngineResultResponse { Data = new List<SearchEngineResult>(), Message = "Invalid URL" };
         }
 
         /// <summary>

@@ -76,6 +76,29 @@ namespace SearchEngine.Repository
             }
         }
 
+        public async void DeleteSearchEngineType(int engineId)
+        {
+            // command to run
+            var cmd = "DELETE FROM SearchEngine WHERE EngineId = @EngineId";
+
+            await using SqlConnection connection = _dataConnection.GetConnection();
+            await using SqlCommand command = new SqlCommand(cmd, connection);
+            try
+            {
+                connection.Open();
+
+                // parameterise the inputs safely
+                command.Parameters.AddWithValue("@EngineId", engineId);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                Logger.LogInformation($"Deleted {rowsAffected} row");
+            }
+            catch (SqlException ex)
+            {
+                Logger.LogError("Database error: " + ex.Message);
+            }
+        }
+
         public async Task<IEnumerable<SearchEngineResult>> GetSearchEngineResults(int engineId)
         {
             var results = new List<SearchEngineResult>();

@@ -25,6 +25,9 @@ export class SearchService {
           if (response.data != null) {
             if (response.message && response.message.length > 0) {
               console.log(response.message);
+              this.toastrService.error(response.message, "", {
+                positionClass: "toast-top-full-width"
+              });
             } 
             return response as SearchDataResponse;
           } else {

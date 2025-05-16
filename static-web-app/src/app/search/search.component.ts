@@ -98,6 +98,9 @@ export class SearchComponent implements OnInit {
         }
       })
     } else {
+      this.toastrService.info("Please provide a URL and search terms", "", {
+        positionClass: "toast-top-full-width"
+      });
       this.completedAction();
     }
   }

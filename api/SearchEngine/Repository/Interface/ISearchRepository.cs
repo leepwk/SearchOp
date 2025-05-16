@@ -7,6 +7,7 @@ public interface ISearchRepository
 {
     Task<SearchEngineTypeResponse> GetSearchEngineType();
     void InsertSearchEngineType(int engineId, string engineDesc);
+    void DeleteSearchEngineType(int engineId);
     Task<IEnumerable<SearchEngineResult>> GetSearchEngineResults(int engineId);
     Task<bool> InsertSearchEngineResults(int engineId, string searchTerm, List<SearchEngineResultBase> toInsert);
 }

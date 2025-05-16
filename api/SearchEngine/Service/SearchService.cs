@@ -30,10 +30,10 @@ namespace SearchEngine.Service
         {
             var results = new List<SearchEngineResult>();
             var msg = string.Empty;
+            var engineId = 0;
 
             try
             {
-                var engineId = 0;
                 // find the engine type from existing list
                 var engineResults = await GetSearchEngineType();
                 var existingEngine = engineResults.Data.FirstOrDefault(s => url.Contains(s.EngineDescription));
@@ -78,6 +78,7 @@ namespace SearchEngine.Service
             }
             catch (Exception ex)
             {
+                _searchRepository.DeleteSearchEngineType(engineId);
                 msg = ex.Message;
                 Logger.LogError($"Unhandled error: {nameof(FetchByUrlTerms)}: {msg}");
             }
