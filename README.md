@@ -15,17 +15,20 @@ Results for a single day are stored in the database, they are overwritten with t
 
 The best results are using the Bing search with Playwright
 
+The Web API can be run and tested using swagger documentation. A page with testable endpoints is available
+
 ## Main Features
 
 - Headless browser search scraping
-- JavaScript-rendering using Playwright (Chromium) - Bing by default (headless) and Google if selected
-- Other search engine types will attempt to use a generic http request scraper
+- JavaScript-rendering using Playwright (Chromium) - Bing by default (using headless) and Google if selected
+- Other search engine types will attempt to use a generic request and html document scraper
 - Database implementation for data/history persistence - without a database, only the current search results will be rendered
-- Scatter chart for data point display
+- Scatter chart for data points display
 
-## If there was more time....stretch features
+## If there was more time....
 
-- Server side validation of data input using FluentValidation
+- Separation of Web API solution into separate projects for Host, Service and Repository layers, each with their own models - currently in one project for convenience
+- Better server side validation of data input using FluentValidation, more useful error messaging
 - Speech to text implementation on the UI
 - Load search engine terms and conditions to check whether scraping is allowed or not
 - Additional SearchAPI scraper implementation for Google
@@ -33,8 +36,8 @@ The best results are using the Bing search with Playwright
 
 ## Tech Stack
 
-- Web Api developed in Visual Studio 2022 .NET 8.0, C#
-- Frontend developed in Visual Studio Code - Angular CLI 17.0.10, node 18.17.0, npm 10.3.0
+- Web API developed in Visual Studio 2022 .NET 8.0, C#
+- Frontend developed in Visual Studio Code - Angular CLI 17.0.10, node 18.17.0 (https://nodejs.org/en/download/), npm 10.3.0
 
 ## Getting Started
 
@@ -42,35 +45,39 @@ The best results are using the Bing search with Playwright
 
 git clone https://github.com/leepwk/SearchOp.git
 
-### 2. Run the solutions
+### 2. Build and Run the solutions
 
-cd SearchOp/api - for the Web API
+`cd SearchOp/api` - for the Web API
+Visual Studio 2022 is recommended IDE
 After restore of all packages (access to nuget.org is a must) and successful Build - on the first run of the solution (IIS Express tested), the Playwright minimal browser will be installed so there will be an initial delay for this and run automatically in Program.cs
+Running by default as localhost:44343
 
-> Console.WriteLine("Installing Playwright browsers...");
+```Console.WriteLine("Installing Playwright browsers...");```
+```var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });```
+```if (exitCode != 0)```
+```{```
+```    Console.WriteLine("Browser installation failed.");```
+```    Environment.Exit(exitCode);```
+```}```
+```Console.WriteLine("Browser installation completed.");```
 
-> var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
-
-> if (exitCode != 0)
-
-> {
-
->    Console.WriteLine("Browser installation failed.");
-
->    Environment.Exit(exitCode);
-
-> }
-
-> Console.WriteLine("Browser installation completed.");
-
-The ConnectionString configuration is found in appsettings.Development.json - replace with the details of a local database
-There is a folder, DBSCripts, in the solution containing all the database creation and data load (for some historical test data)
+The ConnectionString configuration is found in **appsettings.Development.json** - replace with the details of a local database
+```"ConnectionString": "Server=wadev-l\\webappsdev;Database=OMSTrade_backup;Trusted_Connection=True;"```
+There is a folder, **DBSCripts**, in the solution containing the database creation and data load (for some historical test data) sql script to run
 
 ---
-cd SearchOp/static-web-app - for the angular frontend
-npm install
-ng serve - default port is 4200 ie. localhost:4200
+`cd SearchOp/static-web-app` - for the angular frontend
 
-In ngx-config.json, the web api endpoint url is set to as the default Web Api port, update as necessary
-> "searchApiWebUrl":  "https://localhost:44343"
+Install version 18 of Node via the download url (https://nodejs.org/en/download/) - includes automatic install of `npm` node package manager which is used to install/restore packages in the angular project
+
+Optional installation of `nvm` to manage versions of node (https://github.com/coreybutler/nvm-windows/releases) to download a setup executable
+
+`npm install -g @angular/cli@17.0.10` - install specific version of angular
+
+`npm install` - install all project packages
+
+`ng serve` - to run solution, default port is 4200 ie. running as localhost:4200
+
+In ngx-config.json, the Web API endpoint url is set to the default localhost and port, update as necessary
+```"searchApiWebUrl":  "https://localhost:44343"```
 
